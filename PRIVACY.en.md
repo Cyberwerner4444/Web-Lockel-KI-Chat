@@ -29,7 +29,7 @@ Chat IDs, account IDs, titles, roles, messages, and timestamps are stored to pro
 
 Model inference runs in the browser. The reference application has no server-side generation endpoint. Browser runtimes, WASM files, and model weights may be downloaded from the third parties listed in the model documentation. Those providers may observe technical download data such as IP address, time, user agent, requested file, and range requests; prompts are not sent to them as inference requests.
 
-TXT, MD, CSV, and DOCX files are read using browser file APIs only after user selection. File contents are not uploaded to the chat server. Manually copying text into the normal chat subjects it to chat processing and storage.
+TXT, MD, CSV, JSON, and DOCX files are read using browser file APIs only after user selection. File contents are not uploaded to the chat server. Manually copying text into the normal chat subjects it to chat processing and storage.
 
 ## 5. Browser storage
 

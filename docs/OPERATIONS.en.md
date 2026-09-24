@@ -20,7 +20,6 @@
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install -r requirements.txt
-cp .env.example .env
 ```
 
 Generate a key locally only:
@@ -30,6 +29,8 @@ python -c 'import secrets,base64; print(base64.urlsafe_b64encode(secrets.token_b
 ```
 
 Set `HELMUT_SESSION_SECRET` or `HELMUT_SESSION_SECRET_FILE` and choose a private `HELMUT_CHAT_PASSWORD`. `server.py` creates the SQLite database. In production, set `HELMUT_DB_PATH` to a directory that the static server cannot serve.
+
+`server.py` does not load `.env` automatically; it reads only the process environment. Set variables with `export`, explicitly load a completed shell file (`set -a; . ./.env; set +a`), or use the service manager’s `EnvironmentFile`. Replace every `.env.example` placeholder before loading it.
 
 ## Browser data and model flow
 

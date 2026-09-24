@@ -40,8 +40,9 @@ Requirements: Python 3.10 or newer and a virtual environment.
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install -r requirements.txt
-cp .env.example .env
 ```
+
+`server.py` reads environment variables from its process but does not automatically load `.env`. The `export` commands below set the required values directly. `.env.example` is a template; if you use a file based on it, replace every placeholder first and explicitly load it, for example with `set -a; . ./.env; set +a`.
 
 Generate your own stable 32-byte key and set it in a protected environment:
 
@@ -105,7 +106,7 @@ python tools/public_audit.py
 python -m py_compile server.py
 ```
 
-The tests start a temporary server and verify registration/login, account isolation, chat operations, encrypted storage, rate limits, range requests, and static path boundaries. `public_audit.py` also checks for personal/production patterns, private runtime files, and oversized public files.
+The integration tests start a temporary server and verify registration and login, account isolation, creating/renaming/deleting chats, encrypted storage, authentication and API rate limits, chat/message quotas, range requests for a large model file, and static path boundaries. They do not run real browser-model inference. `public_audit.py` also checks for known personal/production patterns, private runtime files, and oversized public files.
 
 Complete [docs/TESTING.en.md](docs/TESTING.en.md) before every upload. Upload only after the audit is clean.
 
@@ -123,7 +124,7 @@ The public release is published as a new anonymized Git repository with a new hi
 
 ## Legal and licensing
 
-WebLLM, Wllama, Mammoth.js, Python packages, and model weights have their own licenses. Review runtime/model sources and usage terms before operation. The legal Markdown/HTML files are templates, not reviewed legal advice.
+This project currently has no `LICENSE` file. Public availability alone does not grant an explicit reuse license; choose a project license before inviting reuse. WebLLM, Wllama, Mammoth.js, Python packages, and model weights have their own licenses. Review runtime/model sources and usage terms before operation. The legal Markdown/HTML files are templates, not reviewed legal advice.
 
 ## Further documents
 

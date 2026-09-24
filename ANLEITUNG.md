@@ -8,7 +8,6 @@ Diese deutsche Anleitung ist der Einstieg für Entwicklung und Deployment. Die e
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install -r requirements.txt
-cp .env.example .env
 ```
 
 Der Server benötigt Python 3.10 oder neuer und `cryptography`. Für Browsermodelle ist ein aktueller Browser mit WebGPU oder CPU/WASM-Unterstützung sowie ausreichend Speicher nötig. Beim ersten Modellstart werden je nach Auswahl mehrere hundert Megabyte bis viele Gigabyte geladen.
@@ -22,6 +21,8 @@ python -c 'import secrets,base64; print(base64.urlsafe_b64encode(secrets.token_b
 ```
 
 Setze den Wert als `HELMUT_SESSION_SECRET` oder speichere ihn in einer Datei mit Modus `0600` und setze `HELMUT_SESSION_SECRET_FILE`. Zusätzlich ist ein eigenes `HELMUT_CHAT_PASSWORD` mit mindestens acht Zeichen nötig, wenn Registrierung erlaubt sein soll. Beide Werte niemals in Git, HTML, JavaScript, Issues, Screenshots oder Logs kopieren.
+
+Wichtig: `server.py` lädt `.env` nicht automatisch. Setze Variablen mit `export`, lade eine selbst ausgefüllte Shell-Datei ausdrücklich (`set -a; . ./.env; set +a`) oder konfiguriere sie als `EnvironmentFile` im Dienstmanager. Die unveränderte `.env.example` enthält absichtlich Platzhalter und darf nicht als produktive Konfiguration gestartet werden.
 
 Die SQLite-Datei sollte über `HELMUT_DB_PATH` außerhalb des Webverzeichnisses liegen. Sie enthält Konten, Sessions und verschlüsselte Chatdaten. Der Schlüssel und die Datenbank müssen gemeinsam und geschützt gesichert werden; ein einzelnes Backup ist nicht ausreichend.
 

@@ -17,15 +17,21 @@ The tests use a temporary SQLite file and a random local session key. They do no
 - `/` opens the chat; `/chat.html`, `/legal.html`, and the explicitly allowed legal texts return HTTP 200.
 - Former landing, support, mining, logo, and legacy legal pages return 404 and are absent from the repository.
 - Disallowed paths, `..`, hidden files, and unlisted root files return 404.
-- Range requests for large static files return `206` with the correct `Content-Range`.
+- Range requests for a large GGUF test file return `206` with the correct `Content-Range`.
 - Status without a cookie reports `authenticated: false`.
 - Registration requires invitation, valid username, matching password, and consent.
 - Login sets a cookie; logout deletes the session and expires the cookie.
 - User A can create, rename, message, and delete a chat.
 - User B receives 404 and no messages for User A’s chats.
 - SQLite does not contain the plaintext test message.
-- Rate and message/chat limits cannot be bypassed.
-- Model URLs, Mammoth URL, CSP, and runtime pins are reachable and match `docs/MODELS.en.md`.
+- Authentication and API rate limits return `429` at their configured thresholds.
+- Chat and message quotas reject additional records at their configured limits.
+
+## Manual release preflight
+
+- Check model/runtime URLs and the Mammoth CDN with a range request or in a browser.
+- Compare runtime versions, model IDs, CSP, and license notes with `docs/MODELS.en.md` and official sources.
+- Test real browser behavior separately; automated tests do not download AI models or generate model responses.
 
 ## Browser checks
 

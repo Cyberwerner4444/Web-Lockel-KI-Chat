@@ -40,8 +40,9 @@ Voraussetzung: Python 3.10 oder neuer und ein virtuelles Environment.
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install -r requirements.txt
-cp .env.example .env
 ```
+
+`server.py` liest Umgebungsvariablen aus dem Prozess, lädt aber `.env` nicht automatisch. Die folgenden `export`-Befehle setzen die benötigten Werte direkt. `.env.example` ist eine Vorlage; wenn du daraus eine Datei verwendest, ersetze zuerst alle Platzhalter und lade sie ausdrücklich, zum Beispiel mit `set -a; . ./.env; set +a`.
 
 Erzeuge einen eigenen 32-Byte-Schlüssel und trage ihn in einer geschützten Umgebung ein:
 
@@ -105,7 +106,7 @@ python tools/public_audit.py
 python -m py_compile server.py
 ```
 
-Die Tests starten einen temporären Server, prüfen Registrierung/Login, Kontentrennung, Chatabläufe, Verschlüsselung, Rate-Limits, Range-Requests und statische Pfadgrenzen. `public_audit.py` prüft zusätzlich verbotene persönliche/produktive Muster, private Laufzeitdateien und zu große Public-Dateien.
+Die Integrationstests starten einen temporären Server und prüfen Registrierung und Login, Kontentrennung, Chat anlegen/umbenennen/löschen, verschlüsselte Speicherung, Anmelde- und API-Rate-Limits, Chat-/Nachrichtenlimits, Range-Requests für eine große Modelldatei sowie statische Pfadgrenzen. Sie führen keine echte Browsermodell-Inferenz aus. `public_audit.py` prüft zusätzlich bekannte persönliche/produktive Muster, private Laufzeitdateien und zu große Public-Dateien.
 
 Vor jedem Upload muss [docs/TESTING.de.md](docs/TESTING.de.md) vollständig abgearbeitet werden. Ein Upload ist erst nach einem sauberen Audit zulässig.
 
@@ -123,7 +124,7 @@ Die Public-Fassung wird als neues, anonymisiertes Git-Repository mit einer neuen
 
 ## Recht und Lizenzen
 
-WebLLM, Wllama, Mammoth.js, Python-Pakete und Modellgewichte haben eigene Lizenzen. Vor dem Betrieb müssen Runtime-/Modellquellen sowie Nutzungsbedingungen geprüft werden. Die rechtlichen Markdown-/HTML-Dateien sind Vorlagen, keine geprüfte Rechtsberatung.
+Für den Code dieses Projekts liegt derzeit keine `LICENSE`-Datei vor. Die öffentliche Verfügbarkeit erteilt allein keine ausdrückliche Nachnutzungslizenz; vor einer Freigabe zur Wiederverwendung muss eine Projektlizenz festgelegt werden. WebLLM, Wllama, Mammoth.js, Python-Pakete und Modellgewichte haben eigene Lizenzen. Vor dem Betrieb müssen Runtime-/Modellquellen sowie Nutzungsbedingungen geprüft werden. Die rechtlichen Markdown-/HTML-Dateien sind Vorlagen, keine geprüfte Rechtsberatung.
 
 ## Weiterführende Dokumente
 

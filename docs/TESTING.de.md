@@ -17,15 +17,21 @@ Die Tests verwenden eine temporäre SQLite-Datei und einen lokalen zufälligen S
 - `/` öffnet den Chat; `/chat.html`, `/legal.html` und die freigegebenen Rechtstexte liefern HTTP 200.
 - Frühere Website-, Support-, Mining-, Logo- und Rechtsseiten liefern 404 und sind nicht im Repository enthalten.
 - Nicht erlaubte Pfade, `..`, versteckte Dateien und unfreigegebene Root-Dateien liefern 404.
-- Range-Requests für große statische Dateien liefern `206` und korrekten `Content-Range`.
+- Range-Requests für eine große GGUF-Testdatei liefern `206` und korrekten `Content-Range`.
 - Status ohne Cookie meldet `authenticated: false`.
 - Registrierung funktioniert nur mit Einladung, gültigem Benutzernamen, passendem Passwort und Zustimmung.
 - Login setzt Cookie; Logout löscht Session und Cookie.
 - Benutzer A kann Chat anlegen, Titel ändern, Nachrichten speichern und löschen.
 - Benutzer B erhält auf Benutzer-A-Chats 404 und keine Nachrichten.
 - SQLite enthält den Klartext eines Testnachrichtentexts nicht.
-- Rate-Limits und Nachrichten-/Chatlimits werden nicht umgangen.
-- Modell-URLs, Mammoth-URL, CSP und Runtime-Pins sind erreichbar und stimmen mit `docs/MODELS.de.md` überein.
+- Anmelde- und API-Rate-Limits antworten ab dem konfigurierten Schwellwert mit `429`.
+- Chat- und Nachrichtenlimits weisen weitere Einträge am Schwellwert zurück.
+
+## Manuelle Release-Vorprüfung
+
+- Modell-/Runtime-URLs und Mammoth-CDN mit einer Range-Anfrage oder im Browser auf Erreichbarkeit prüfen.
+- Runtime-Versionen, Modell-IDs, CSP und Lizenzhinweise mit `docs/MODELS.de.md` und den offiziellen Quellen abgleichen.
+- Das echte Browserverhalten separat testen; die automatisierten Tests laden keine KI-Modelle und erzeugen keine Modellantwort.
 
 ## Browserprüfung
 

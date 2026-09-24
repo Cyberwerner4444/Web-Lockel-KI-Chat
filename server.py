@@ -19,9 +19,11 @@ import secrets
 import sqlite3
 import threading
 import time
+from contextlib import contextmanager
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from typing import Iterator
 from urllib.parse import unquote, urlsplit
 
 try:
@@ -104,16 +106,23 @@ def password_configured() -> bool:
     return len(INVITE_PASSWORD) >= 8
 
 
-def db_connection() -> sqlite3.Connection:
+@contextmanager
+def db_connection() -> Iterator[sqlite3.Connection]:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     connection = sqlite3.connect(DB_PATH, timeout=10)
     try:
         os.chmod(DB_PATH, 0o600)
     except OSError:
         pass
-    connection.row_factory = sqlite3.Row
-    connection.execute("PRAGMA foreign_keys = ON")
-    return connection
+    try:
+        connection.row_factory = sqlite3.Row
+        connection.execute("PRAGMA foreign_keys = ON")
+        # sqlite3.Connection.__exit__ commits/rolls back, but does not close.
+        # Wrap it explicitly so every request releases its file descriptor.
+        with connection:
+            yield connection
+    finally:
+        connection.close()
 
 
 def now() -> int:
@@ -766,6 +775,11 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_DELETE(self) -> None:  # noqa: N802
         route = urlsplit(self.path).path
+        try:
+            self.read_json()
+        except ValueError as error:
+            self.send_error_json(str(error), HTTPStatus.BAD_REQUEST)
+            return
         if not self.apply_api_limit(route):
             return
         chat_id = self.chat_route(route, "DELETE")

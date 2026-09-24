@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 TEXT_SUFFIXES = {
     ".css",
+    ".example",
     ".html",
     ".js",
     ".md",
@@ -23,6 +24,7 @@ TEXT_SUFFIXES = {
     ".yaml",
     ".yml",
 }
+TEXT_FILENAMES = {".env", ".env.example", ".gitignore", "Caddyfile"}
 FORBIDDEN_TEXT = (
     re.compile(r"\b[a-z0-9._%+-]+@(?!example\.com\b)[a-z0-9.-]+\.[a-z]{2,}\b", re.I),
     re.compile(r"\b[a-z0-9-]+\.ch\b|\b[a-z0-9-]+\.mail\b", re.I),
@@ -32,7 +34,33 @@ FORBIDDEN_TEXT = (
     re.compile(r"(?:ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|(?<![A-Za-z0-9])sk-[A-Za-z0-9]{8,})"),
     re.compile(r"\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\b"),
 )
-FORBIDDEN_SUFFIXES = {".sqlite3", ".pem", ".key", ".secret", ".stl", ".zip"}
+FORBIDDEN_SUFFIXES = {
+    ".db",
+    ".gguf",
+    ".key",
+    ".model",
+    ".onnx",
+    ".pem",
+    ".pth",
+    ".pt",
+    ".safetensors",
+    ".secret",
+    ".sqlite",
+    ".sqlite3",
+    ".sqlite3-shm",
+    ".sqlite3-wal",
+    ".stl",
+    ".zip",
+}
+LEGACY_CHAT_EXCLUSIONS = {
+    "index.html",
+    "support.html",
+    "live-mining.html",
+    "live-mining.js",
+    "live-mining-worker.js",
+    "logos.html",
+    "rechtliches.html",
+}
 MAX_PUBLIC_FILE_BYTES = 50 * 1024 * 1024
 
 
@@ -54,11 +82,19 @@ def main() -> int:
         relative = path.relative_to(ROOT)
         if relative == Path("tools/public_audit.py"):
             continue
+        if path.name == ".env" or (
+            path.name.startswith(".env.") and path.name != ".env.example"
+        ):
+            violations.append(f"private environment file: {relative}")
+        if path.name in LEGACY_CHAT_EXCLUSIONS:
+            violations.append(f"out-of-scope legacy page/feature: {relative}")
+        if "web-upload" in relative.parts or "helmut-logo" in path.name.lower():
+            violations.append(f"out-of-scope upload/logo asset: {relative}")
         if path.suffix.lower() in FORBIDDEN_SUFFIXES:
             violations.append(f"forbidden file type: {relative}")
         if path.stat().st_size > MAX_PUBLIC_FILE_BYTES:
             violations.append(f"file exceeds public size limit: {relative}")
-        if path.suffix.lower() in TEXT_SUFFIXES:
+        if path.suffix.lower() in TEXT_SUFFIXES or path.name in TEXT_FILENAMES:
             try:
                 text = path.read_text(encoding="utf-8")
             except UnicodeDecodeError:
