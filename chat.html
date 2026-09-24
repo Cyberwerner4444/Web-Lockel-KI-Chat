@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0c120e" />
+    <meta name="description" content="Privater Helmut-KI Chat mit eigenen Benutzerkonten und persönlichen Verläufen." />
+    <title>Helmut-KI // Chat</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body class="chat-page-body">
+    <div class="noise" aria-hidden="true"></div>
+    <div class="chat-site-shell">
+      <header class="site-header chat-header">
+        <a class="brand" href="/" aria-label="Zum Chat">
+          <span class="brand-mark" aria-hidden="true"><span></span></span>
+          <span class="brand-text"><small>PRIVATES ORAKEL</small><strong>HELMUT-KI</strong></span>
+        </a>
+        <nav class="main-nav" aria-label="Hauptnavigation">
+          <a href="chat.html" class="is-active">Chat</a>
+        </nav>
+        <div class="header-signal"><span class="signal-dot"></span> BROWSER / WEBGPU LOCAL</div>
+      </header>
+
+      <main class="chat-app" id="chat-app">
+        <section class="auth-gate" id="auth-gate" aria-live="polite">
+          <div class="auth-intro">
+            <p class="eyebrow"><span class="eyebrow-line"></span> 05 / DAS ORAKEL</p>
+            <h1>Dein Chat.<br /><em>Dein Verlauf.</em></h1>
+            <p class="auth-lede">Melde dich an, damit deine Gespräche privat bleiben. Neue Konten werden einmalig mit dem Zugangspasswort freigeschaltet.</p>
+            <div class="locality-note"><span class="locality-dot"></span><span><strong>LOCAL INFERENCE</strong><small>Antworten werden direkt auf deinem Gerät berechnet.</small></span></div>
+          </div>
+
+          <div class="auth-card">
+            <div class="auth-tabs" role="tablist" aria-label="Konto">
+              <button class="auth-tab is-active" id="login-tab" type="button" role="tab" aria-selected="true" data-auth-view="login">Anmelden</button>
+              <button class="auth-tab" id="register-tab" type="button" role="tab" aria-selected="false" data-auth-view="register">Registrieren</button>
+            </div>
+
+            <form class="auth-form" id="login-form" data-auth-panel="login">
+              <div class="form-heading"><span class="console-kicker">WELCOME BACK</span><h2>Zurück zum Orakel.</h2><p>Deine Chats sind nur in deinem Konto sichtbar.</p></div>
+              <label for="login-username">Benutzername</label>
+              <input id="login-username" name="username" type="text" autocomplete="username" required />
+              <label for="login-password">Persönliches Passwort</label>
+              <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+              <button class="button button-accent button-wide" type="submit">Anmelden <span>↗</span></button>
+              <p class="auth-message" id="login-message" role="status"></p>
+            </form>
+
+            <form class="auth-form hidden" id="register-form" data-auth-panel="register">
+              <div class="form-heading"><span class="console-kicker">PRIVATE INVITE</span><h2>Neues Konto.</h2><p>Das Zugangspasswort ist nur für die Registrierung nötig.</p></div>
+              <label for="register-invite">Zugangspasswort</label>
+              <input id="register-invite" name="invite_password" type="password" autocomplete="off" required />
+              <label for="register-username">Benutzername</label>
+              <input id="register-username" name="username" type="text" autocomplete="username" required />
+              <label for="register-password">Persönliches Passwort</label>
+              <input id="register-password" name="password" type="password" autocomplete="new-password" minlength="8" required />
+              <label for="register-password-confirm">Passwort wiederholen</label>
+              <input id="register-password-confirm" name="password_confirm" type="password" autocomplete="new-password" minlength="8" required />
+              <label class="legal-consent">
+                <input name="terms_accepted" type="checkbox" value="yes" required />
+                <span>Ich akzeptiere die <a href="legal.html#terms" target="_blank" rel="noopener noreferrer">AGB</a> und habe die <a href="legal.html#privacy" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a> gelesen.</span>
+              </label>
+              <button class="button button-accent button-wide" type="submit">Konto anlegen <span>↗</span></button>
+              <p class="auth-message" id="register-message" role="status"></p>
+            </form>
+          </div>
+        </section>
+
+        <section class="chat-workspace hidden" id="chat-workspace">
+          <aside class="chat-sidebar">
+            <div class="sidebar-heading"><span class="console-kicker">PRIVATE ARCHIVE</span></div>
+            <button class="new-chat-button" id="new-chat-main" type="button"><span>＋</span> Neuer Chat</button>
+            <button class="local-document-open-button" id="local-document-open" type="button"><span>▣</span> Dokumente lokal</button>
+            <div class="chat-list" id="chat-list" aria-label="Deine Chats"></div>
+            <div class="sidebar-foot">
+              <div class="account-chip"><span class="account-avatar" id="account-avatar">?</span><span><strong id="account-name">—</strong><small>Privates Konto</small></span></div>
+              <button class="sidebar-logout" id="logout-button" type="button">Abmelden ↗</button>
+            </div>
+          </aside>
+
+          <section class="chat-main" id="chat-main-view">
+            <div class="chat-main-topbar">
+              <div><span class="console-dot"></span><strong>HELMUT ORACLE</strong><small id="chat-title">Neuer Chat</small></div>
+              <div class="model-actions">
+                <div class="model-status" id="model-status"><span class="status-dot"></span> BROWSER-MODELL BEREIT</div>
+                <label class="execution-mode-control" for="gpu-mode-toggle" title="GPU oder CPU für das ausgewählte Modell verwenden">
+                  <span class="execution-mode-question">Grafikkarte?</span>
+                  <span class="execution-mode-switch"><input id="gpu-mode-toggle" type="checkbox" aria-label="Rechenmodus GPU oder CPU auswählen" /><output id="gpu-mode-value" for="gpu-mode-toggle">CPU</output></span>
+                </label>
+                <label class="holiness-control" for="holiness-range" title="Stil-Skill für Antworten aktivieren">
+                  <span class="holiness-label">HEILIGKEIT</span>
+                  <input id="holiness-range" class="holiness-range" type="range" min="0" max="2" step="1" value="0" aria-label="Heiligkeits-Stufe" />
+                  <output id="holiness-value" class="holiness-value" for="holiness-range">AUS</output>
+                </label>
+                <div class="model-picker">
+                  <div class="model-picker-selects">
+                    <select class="model-select" id="model-select" aria-label="Browser-Modell auswählen">
+                      <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC">Llama 3.2 · 1B · ~2 GB RAM</option>
+                      <option value="SmolLM2-1.7B-Instruct-q4f16_1-MLC">SmolLM2 · 1,7B · ~4 GB RAM</option>
+                      <option value="Llama-3.2-3B-Instruct-q4f16_1-MLC">Llama 3.2 · 3B · ~5 GB RAM</option>
+                      <option value="Phi-3.5-mini-instruct-q4f16_1-MLC">Phi-3.5 Mini · ~6 GB RAM</option>
+                      <option value="Qwen3.8-2B-Distill-q4f16_1-MLC">Qwen3.8 Distill · 2B · ~3 GB RAM</option>
+                      <option value="Qwen3.8-27B-Uncensored-IQ2_XXS-GGUF">Qwen3.8 Uncensored · 27B · IQ2 · ~12 GB RAM</option>
+                      <option value="Qwen3.8-27B-Uncensored-Q4_K_M-GGUF">Qwen3.8 Uncensored · 27B · Q4 · ~20 GB RAM</option>
+                    </select>
+                    <select class="context-select" id="context-select" aria-label="Kontextlimit auswählen">
+                      <option value="auto">AUTO · wächst stufenweise</option>
+                      <option value="4096">4K</option>
+                      <option value="8192">8K</option>
+                      <option value="12288">12K</option>
+                      <option value="16384">16K</option>
+                      <option value="24576">24K</option>
+                      <option value="32768">32K</option>
+                      <option value="49152">48K</option>
+                      <option value="65536">64K</option>
+                      <option value="98304">96K</option>
+                      <option value="131072">128K</option>
+                      <option value="196608">192K</option>
+                      <option value="262144">256K · Maximum</option>
+                    </select>
+                  </div>
+                  <div class="model-picker-details">
+                    <small class="model-memory" id="model-memory">Speicher: Modell auswählen</small>
+                    <small class="context-memory" id="context-memory">Zusatz-RAM: automatisch nach Bedarf</small>
+                  </div>
+                </div>
+                <div class="model-load-actions">
+                  <button class="load-model-button" id="load-model-button" type="button">Modell laden ↗</button>
+                  <button class="unload-model-button" id="unload-model-button" type="button" disabled>Modell entladen ×</button>
+                </div>
+              </div>
+            </div>
+            <div class="chat-messages" id="chat-messages" aria-live="polite">
+              <div class="chat-welcome" id="chat-welcome">
+                <div class="welcome-symbol">△</div>
+                <p class="console-kicker">CHANNEL BLESSED</p>
+                <h1>Was soll Helmut<br /><em>für dich lösen?</em></h1>
+                <p>Deine Unterhaltungen werden deinem Konto zugeordnet. Die Antworten werden lokal in deinem Browser berechnet. Beim ersten Start wird das Modell einmalig geladen.</p>
+                <div class="prompt-suggestions">
+                  <button type="button" data-prompt="Analysiere mir diesen Fehler Schritt für Schritt.">Fehler analysieren</button>
+                  <button type="button" data-prompt="Erkläre mir dieses Thema einfach und mit einem Beispiel.">Thema erklären</button>
+                  <button type="button" data-prompt="Hilf mir, einen guten Plan für dieses Projekt zu erstellen.">Plan erstellen</button>
+                </div>
+              </div>
+            </div>
+            <form class="composer" id="composer-form">
+              <div class="composer-status-row"><span id="composer-status">Bereit für dein Prompt.</span></div>
+              <div class="composer-input-row">
+                <textarea id="composer-input" rows="1" placeholder="Nachricht an Helmut …" autocomplete="off" required></textarea>
+                <button class="send-button" type="submit" aria-label="Nachricht senden">↑</button>
+              </div>
+            </form>
+            <p class="chat-disclaimer">Helmut kann sich irren. Prüfe wichtige Antworten. Die KI rechnet auf deinem Gerät. Modell: <span id="model-name">Browser-Modell</span>. · <a href="legal.html#terms">AGB</a> · <a href="legal.html#privacy">Datenschutz</a></p>
+          </section>
+
+          <section class="document-main hidden" id="document-main-view">
+            <div class="document-main-topbar">
+              <div><span class="console-dot"></span><strong>LOCAL FILE WORKSHOP</strong><small id="local-document-title">Keine Datei geöffnet</small></div>
+              <button class="document-back-button" id="local-document-back" type="button">Chat anzeigen ↗</button>
+            </div>
+            <div class="document-main-scroll">
+              <div class="document-main-intro">
+                <div>
+                  <span class="console-kicker">PRIVATE IN THE BROWSER</span>
+                  <h1>Dein Dokument.<br /><em>Kein Upload.</em><small><span>Keine Prompt-Speicherung</span><b>·</b><span>Keine Kontext-Speicherung</span><b>·</b><span>Keine Wissens-Speicherung</span></small></h1>
+                  <p>Öffne eine Datei direkt von deinem PC. Der Inhalt bleibt im Browser und wird nicht an die Helmut-KI-API hochgeladen. Auch die optionale KI-Bearbeitung läuft lokal über dein Browser-Modell.</p>
+                </div>
+                <p class="local-document-formats">UNTERSTÜTZT: TXT · MD · CSV · JSON · DOCX <span>ODT ist derzeit nicht enthalten.</span></p>
+              </div>
+              <div class="document-control-row">
+                <div class="local-document-toolbar">
+                  <label class="local-document-file-button" for="local-document-file">Datei lokal öffnen ↗<input id="local-document-file" type="file" accept=".txt,.md,.csv,.json,.docx,text/plain,text/markdown,text/csv,application/json,application/vnd.openxmlformats-officedocument.wordprocessingml.document" /></label>
+                  <button class="local-document-action" id="local-document-save" type="button" disabled>Lokal speichern ↗</button>
+                  <button class="local-document-action is-muted" id="local-document-clear" type="button" disabled>Schliessen</button>
+                  <span class="local-document-name" id="local-document-name">Keine Datei geöffnet</span>
+                </div>
+                <div class="document-model-controls">
+                  <label class="document-model-field" for="document-model-select"><span>LOKALES KI-MODELL</span><select class="model-select" id="document-model-select" aria-label="Lokales KI-Modell für Dokumente">
+                    <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC">Llama 3.2 · 1B · ~2 GB RAM</option>
+                    <option value="SmolLM2-1.7B-Instruct-q4f16_1-MLC">SmolLM2 · 1,7B · ~4 GB RAM</option>
+                    <option value="Llama-3.2-3B-Instruct-q4f16_1-MLC">Llama 3.2 · 3B · ~5 GB RAM</option>
+                    <option value="Phi-3.5-mini-instruct-q4f16_1-MLC">Phi-3.5 Mini · ~6 GB RAM</option>
+                    <option value="Qwen3.8-2B-Distill-q4f16_1-MLC">Qwen3.8 Distill · 2B · ~3 GB RAM</option>
+                    <option value="Qwen3.8-27B-Uncensored-IQ2_XXS-GGUF">Qwen3.8 Uncensored · 27B · IQ2 · ~12 GB RAM</option>
+                    <option value="Qwen3.8-27B-Uncensored-Q4_K_M-GGUF">Qwen3.8 Uncensored · 27B · Q4 · ~20 GB RAM</option>
+                  </select><small id="document-model-memory">Speicher: Modell auswählen</small></label>
+                  <div class="document-model-actions">
+                    <label class="execution-mode-control document-execution-mode" for="document-gpu-mode-toggle" title="GPU oder CPU für das ausgewählte Modell verwenden">
+                      <span class="execution-mode-question">Grafikkarte?</span>
+                      <span class="execution-mode-switch"><input id="document-gpu-mode-toggle" type="checkbox" aria-label="Rechenmodus GPU oder CPU auswählen" /><output id="document-gpu-mode-value" for="document-gpu-mode-toggle">CPU</output></span>
+                    </label>
+                    <div class="model-load-actions">
+                      <button class="load-model-button" id="document-load-model-button" type="button">Modell laden ↗</button>
+                      <button class="unload-model-button" id="document-unload-model-button" type="button" disabled>Modell entladen ×</button>
+                    </div>
+                  </div>
+                  <label class="document-model-field" for="document-context-select"><span>KONTEXTLIMIT</span><select class="context-select" id="document-context-select" aria-label="Kontextlimit für Dokumente">
+                    <option value="auto">AUTO · wächst stufenweise</option>
+                    <option value="4096">4K</option>
+                    <option value="8192">8K</option>
+                    <option value="12288">12K</option>
+                    <option value="16384">16K</option>
+                    <option value="24576">24K</option>
+                    <option value="32768">32K</option>
+                    <option value="49152">48K</option>
+                    <option value="65536">64K</option>
+                    <option value="98304">96K</option>
+                    <option value="131072">128K</option>
+                    <option value="196608">192K</option>
+                    <option value="262144">256K · Maximum</option>
+                  </select><small id="document-context-memory">Zusatz-RAM: automatisch nach Bedarf</small></label>
+                </div>
+              </div>
+              <div class="document-edit-grid">
+                <div class="document-editor-card">
+                  <label class="document-field-label" for="local-document-editor">DOKUMENT / EDITOR</label>
+                  <textarea class="local-document-editor" id="local-document-editor" rows="18" spellcheck="true" disabled placeholder="Nach dem Öffnen erscheint der Dokumentinhalt hier. Änderungen bleiben zunächst nur in diesem Browserfenster."></textarea>
+                </div>
+                <div class="document-prompt-card">
+                  <label class="document-field-label" for="local-document-prompt">LOKALER BEFEHL AN DAS DOKUMENT</label>
+                  <textarea class="document-prompt" id="local-document-prompt" rows="10" disabled placeholder="Zum Beispiel: Überarbeite den Text freundlich und verständlich. Bewahre alle Zahlen und Namen. Gib nur die fertige Fassung aus."></textarea>
+                  <button class="local-document-ai" id="local-document-ai" type="button" disabled>Auf Dokument anwenden ↗</button>
+                  <p class="document-prompt-hint">Der Prompt und die Antwort werden nicht in den Chatverlauf übernommen. Du entscheidest selbst, ob du das Ergebnis in den Editor übernimmst und lokal speicherst.</p>
+                </div>
+              </div>
+              <div class="local-document-result hidden" id="local-document-result">
+                <div class="local-document-result-head"><span class="console-kicker">LOCAL OUTPUT</span><button class="local-document-action is-muted" id="local-document-apply" type="button" disabled>Ergebnis in Editor übernehmen</button></div>
+                <div class="local-document-result-text" id="local-document-result-text"></div>
+              </div>
+              <p class="local-document-privacy"><strong>Privat im Browser:</strong> Die Datei, dein Dokument-Prompt, der Dokumentkontext und die lokale KI-Ausgabe werden nur in diesem Browserfenster verarbeitet. Nichts davon wird im Chatverlauf gespeichert. Wenn du Dokumentinhalt selbst in das normale Chatfeld kopierst, wird dieser Inhalt allerdings als normale Chatnachricht auf dem Server gespeichert.</p>
+              <p class="local-document-status" id="local-document-status" role="status">Noch keine Datei geöffnet.</p>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

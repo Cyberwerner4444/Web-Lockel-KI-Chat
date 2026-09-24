@@ -1,0 +1,16 @@
+example.com {
+    encode gzip
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    }
+    reverse_proxy 127.0.0.1:8080
+}
+
+# Optional legacy host; replace both example names with real domains before use.
+chat.example.com {
+    redir https://example.com/chat.html 308
+}
